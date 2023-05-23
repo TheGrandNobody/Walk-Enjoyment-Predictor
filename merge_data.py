@@ -237,7 +237,7 @@ if __name__ == "__main__":
     merged_df_final = merged_df_final.drop(columns=["Tijdstempel", "Date", "Time"])
     meta_cols = ["ID", "datetime"]
     label_cols = ["hate-enjoy", "bored-interested", "absorbed", "tiring-energizing", "depressed-happy", "bad-good_physically", "sense_accomplishment"]
-    whether_cols = ["Weather", "Temperature (Celsius)", "UV index", "Wind (m/s)", "Humidity (%)"]
+    whether_cols = ["Weather", "Temperature (Celsius)", "UV index", "Wind (km/h)", "Humidity (%)"]
     new_col = meta_cols + [col for col in merged_df_final.columns.to_list() if col not in meta_cols+whether_cols+label_cols] + whether_cols + label_cols
     merged_df_final = merged_df_final[new_col]
     
