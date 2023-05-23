@@ -3,7 +3,6 @@
 # Imports
 import matplotlib.pyplot as plt
 import pandas as pd
-import plot_likert
 import seaborn as sns
 from scipy.stats.stats import pearsonr
 
