@@ -6,18 +6,18 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     # Load the data
-    data = pd.read_csv("merged_data_upsample.csv")
+    data = pd.read_csv("merged_data_5s.csv")
     data['datetime'] = pd.to_datetime(data['datetime'])
     data['datetime'] = data['datetime'].apply(lambda x: x.timestamp())
-    data['UV index'] = data['UV index'].apply(lambda x: x if x.isnumeric() else 5 if 'moderate' else 3)
     data['Weather'] = data['Weather'].apply(lambda x: 0 if x == "Sunny" else 1 if x == "Rainy" else 0)
 
     # Calculate the average of each of the last six columns
-    data['Average PACES'] = data.iloc[:, -6:].mean(axis=1)
+    data['Average PACES'] = data.iloc[:, -4:].mean(axis=1)
+    data['Average PACES'] = data.iloc[:, -4:].mean(axis=1)
     data = data.rename(columns={'Wind (m/s)': 'Wind (km/h)'})
     # Select only numeric columns
-    numeric_cols = data.drop(["Unnamed: 0", "ID", "Weather", "hate-enjoy", "bored-interested", "absorbed", "tiring-energizing", "depressed-happy", "bad-good_physically", "sense_accomplishment"], axis = 1).select_dtypes(include=[np.number]).columns.tolist()
-
+    numeric_cols = data.drop(["Unnamed: 0", "ID", "Weather", "hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"], axis = 1).select_dtypes(include=[np.number]).columns.tolist()
+    
     n = len(numeric_cols)
     sqrt_n = int(np.ceil(np.sqrt(n))) # for plotting on a square grid
 
@@ -46,10 +46,10 @@ if __name__ == "__main__":
 
     # Filter your dataframe to remove the anomalies
     data = data[data['anomaly'] == 1]
-    df = data.drop('anomaly', axis=1)
+    data = data.drop(['anomaly', 'Unnamed: 0'], axis=1)
 
     # Save the dataframe to a csv file
-    df.to_csv("clean.csv", index=False)
+    data.to_csv("clean_5s.csv", index=False)
 
     
     
