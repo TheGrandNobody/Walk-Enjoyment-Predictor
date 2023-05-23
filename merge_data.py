@@ -7,7 +7,7 @@ import pandas as pd
 from collections import defaultdict
 
 # Sample and duplicate label every interval seconds
-UP_SAMPLING_INTERVAL = 5
+UP_SAMPLING_INTERVAL = 0.25
 
 
 def load_unify_data(xls):
@@ -241,4 +241,4 @@ if __name__ == "__main__":
     new_col = meta_cols + [col for col in merged_df_final.columns.to_list() if col not in meta_cols+whether_cols+label_cols] + whether_cols + label_cols
     merged_df_final = merged_df_final[new_col]
     
-    merged_df_final.to_csv("merged_data_5s.csv")
+    merged_df_final.to_csv("merged_data_025s.csv")
