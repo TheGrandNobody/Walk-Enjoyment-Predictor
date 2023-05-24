@@ -7,7 +7,7 @@ import seaborn as sns
 from scipy.stats.stats import pearsonr
 
 # Define name for output file
-OUT_FILE = 'time_series_10s.png'
+OUT_FILE = 'time_series_1s.png'
 
 # Define title for plot
 TITLE = 'Time Series (granularity = 1s)'
@@ -17,7 +17,7 @@ START = pd.to_datetime('2023-06-08 18:14:00')
 END = pd.to_datetime('2023-06-08 20:30:00')
 
 # load data
-df = pd.read_csv('merged_data_1s.csv')
+df = pd.read_csv('clean_1s.csv')
 
 # Average PACES scores into 1 variable mood
 paces_cols = ['hate-enjoy', 'notpleasant_pleasant', 'notpleasurable_pleasurable', 'bad-good_feeling']
@@ -31,7 +31,7 @@ print(df['PACES'].describe())
 
 fig, axes = plt.subplots(nrows=1, ncols=3)
 
-variables = ["Temperature (Celsius)", "Wind (Km/h)", "Humidity (%)"]
+variables = ["Temperature (Celsius)", "Wind (m/s)", "Humidity (%)"]
 titles = ["Temperature", "Wind", "Humidity"]
 
 fig, axes = plt.subplots(nrows=1, ncols=3, sharey=True)
@@ -86,7 +86,7 @@ loc_cols= [col for col in df.columns if col in ['La' 'Lo','He','V','D','Ho','VA'
 mood = ['PACES']
 
 # Convert 'timestamp' column to datetime
-df['timestamp'] = pd.to_datetime(df['datetime'])
+df['timestamp'] = pd.to_datetime(df['datetime'], unit = "s")
 
 # Filter DataFrame for ID 1
 df_id1 = df[df['ID'] == 1.0]

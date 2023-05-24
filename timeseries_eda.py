@@ -5,14 +5,14 @@ import pandas as pd
 import statistics
 
 # Load data
-df = pd.read_csv('merged_data_upsample_10s.csv')
+df = pd.read_csv('clean_1s.csv')
 
 # Define maximum amount of minutes that are allowed between walks for them to be considered one walk
-LIMIT=20
+LIMIT=30
 
 def separate_walks(df):
 
-    df['Date'] = pd.to_datetime(df['datetime'])
+    df['Date'] = pd.to_datetime(df['datetime'], unit = "s")
     df = df.sort_values('Date')
     
     # Intialize list for each separate walk
@@ -27,6 +27,7 @@ def separate_walks(df):
         else:
             time_diff = row['Date'] - prev_row['Date']
             if time_diff.total_seconds() / 60 > LIMIT or row['ID'] != prev_row["ID"]:
+                print(index)
                 df_parts.append(pd.DataFrame(current_part))
                 current_part = []
             current_part.append(row)
@@ -51,4 +52,5 @@ if __name__ == "__main__":
     print("Total amount of walks = ", len(walks))
 
     minutes_walk=duration(walks)
-    print("mean, sd, median:", statistics.mean(minutes_walk), statistics.stdev(minutes_walk), statistics.median(minutes_walk))
+    print(minutes_walk)
+    print("mean, sd, median, min, max:", statistics.mean(minutes_walk), statistics.stdev(minutes_walk), statistics.median(minutes_walk), min(minutes_walk), statistics.quantiles(minutes_walk), max(minutes_walk))
