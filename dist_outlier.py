@@ -13,7 +13,6 @@ if __name__ == "__main__":
 
     # Calculate the average of each of the last six columns
     data['Average PACES'] = data.iloc[:, -4:].mean(axis=1)
-    data['Average PACES'] = data.iloc[:, -4:].mean(axis=1)
     # data = data.rename(columns={'Wind (m/s)': 'Wind (km/h)'})
     # Select only numeric columns
     numeric_cols = data.drop(["Unnamed: 0", "ID", "Weather", "hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"], axis = 1).select_dtypes(include=[np.number]).columns.tolist()

@@ -52,22 +52,24 @@ if __name__ == "__main__":
 
     ## GPS
     # Shift the DataFrame to get the next coordinates, calculate the distance, and then fill any NaN values with 0
-    df['lat_shift'] = df['La'].shift(-1)
-    df['lon_shift'] = df['Lo'].shift(-1)
+    df['lat_shift'] = df['La'].shift(-1).fillna(df['La'].iloc[-1])
+    df['lon_shift'] = df['Lo'].shift(-1).fillna(df['Lo'].iloc[-1])
     df['distance'] = haversine(df['La'], df['Lo'], df['lat_shift'], df['lon_shift'])
     df['distance'].fillna(0, inplace=True)
     # Calculate total cumulative distance traveled
     df['cum_dist'] = df['distance'].cumsum()
     # Calculate total ascent and descent
-    df['height_diff'] = df['He'].diff()
+    df['height_diff'] = df['He'].diff().fillna(df['He'].iloc[0])
     df['ascent'] = np.where(df['height_diff'] > 0, df['height_diff'], 0)
     df['descent'] = np.where(df['height_diff'] < 0, -df['height_diff'], 0)
     df['total_ascent'] = df['ascent'].cumsum()
     df['total_descent'] = df['descent'].cumsum()
     # Calculate changes in direction
     df['direction_diff'] = df['D'].diff().abs()
+    df['direction_diff'] = df['direction_diff'].fillna(df['direction_diff'].iloc[1])
     # Calculate acceleration
-    df['velocity_diff'] = df['V'].diff()
+    df['velocity_diff'] = df['V'].diff().fillna(df['V'].iloc[0])
+    print(df['velocity_diff'].isnull().sum())
     df['acceleration'] = df['velocity_diff'] / (GRANULARITY / 3600)  # Assuming time difference is 30 seconds
 
     # Save the DataFrame to a new CSV file
