@@ -7,14 +7,17 @@ import matplotlib.pyplot as plt
 if __name__ == "__main__":
     # Load the data
     data = pd.read_csv("merged_data_1s.csv")
+    data = pd.read_csv("merged_data_1s.csv")
     data['datetime'] = pd.to_datetime(data['datetime'])
     data['datetime'] = data['datetime'].apply(lambda x: x.timestamp())
     data['Weather'] = data['Weather'].apply(lambda x: 0 if x == "Sunny" else 1 if x == "Rainy" else 0)
 
     # Calculate the average of each of the last six columns
     data['Average PACES'] = data.iloc[:, -4:].mean(axis=1)
+    data['Average PACES'] = data.iloc[:, -4:].mean(axis=1)
     data = data.rename(columns={'Wind (m/s)': 'Wind (km/h)'})
     # Select only numeric columns
+    numeric_cols = data.drop(["Unnamed: 0", "ID", "Weather", "hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"], axis = 1).select_dtypes(include=[np.number]).columns.tolist()
     numeric_cols = data.drop(["Unnamed: 0", "ID", "Weather", "hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"], axis = 1).select_dtypes(include=[np.number]).columns.tolist()
 
     n = len(numeric_cols)
@@ -48,6 +51,7 @@ if __name__ == "__main__":
     df = data.drop('anomaly', axis=1)
 
     # Save the dataframe to a csv file
+    df.to_csv("clean_1s.csv", index=False)
     df.to_csv("clean_1s.csv", index=False)
 
     
