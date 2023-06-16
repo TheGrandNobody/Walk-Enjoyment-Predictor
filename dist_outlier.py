@@ -46,10 +46,10 @@ if __name__ == "__main__":
 
     # Filter your dataframe to remove the anomalies
     data = data[data['anomaly'] == 1]
-    df = data.drop('anomaly', axis=1)
+    data = data.drop(['anomaly', 'Unnamed: 0'], axis=1)
 
     # Save the dataframe to a csv file
-    df.to_csv("clean.csv", index=False)
+    data.to_csv("clean.csv", index=False)
 
     
     
