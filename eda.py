@@ -25,7 +25,7 @@ df['PACES'] = df[paces_cols].mean(axis=1)
 print(df['PACES'].describe())
 
 # Rename wind column
-df = df.rename(columns={'Wind (m/s)': 'Wind (Km/h)'})
+# df = df.rename(columns={'Wind (m/s)': 'Wind (Km/h)'})
 
 # Plot weather and mood score -----------------------------------------------------
 
