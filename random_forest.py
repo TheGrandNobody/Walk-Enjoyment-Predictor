@@ -66,10 +66,10 @@ def prepare_dataset_regression(data_path, label_col="Average PACES", exclude_col
 
 
 if __name__ == "__main__":
-    data_path = "final.csv"
+    data_path = "final_5s.csv"
     label_col = "Average PACES"
-    exclude_cols = ["ID", "datetime"]
-    split_ratio = 0.7
+    exclude_cols = ["ID", "datetime", "hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"]
+    split_ratio = 0.75
     unknow_users = False # if we want to predict enjoyment for new users instead of the rest part of each user
     train_X, train_y, test_X, test_y = prepare_dataset_regression(data_path, label_col, exclude_cols, split_ratio, unknow_users)
     train_y, test_y = np.ravel(train_y), np.ravel(test_y)
@@ -79,13 +79,12 @@ if __name__ == "__main__":
                 train_y,
                 test_X,
                 n_estimators=10,
-                min_samples_leaf=5,
+                min_samples_leaf=200,
                 criterion='friedman_mse',
                 print_model_details=False, 
                 gridsearch=False # to print the best params, enable 'print_model_details'
     )
 
     print(f"MSE: {metrics.mean_squared_error(test_y, pred_test_y)}")
-    print(f"MAE: {metrics.mean_absolute_error(test_y, pred_test_y)}")
 
 

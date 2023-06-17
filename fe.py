@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-GRANULARITY = 5  # 5 seconds
+GRANULARITY = 5 # 5 seconds
 
 # Function to calculate distance between two lat/lon points using Haversine formula
 def haversine(lat1, lon1, lat2, lon2):
@@ -16,7 +16,7 @@ def haversine(lat1, lon1, lat2, lon2):
 
 if __name__ == "__main__":
     # Load your data
-    df = pd.read_csv('clean.csv')
+    df = pd.read_csv('clean_5s.csv')
 
     ## GYROSCOPE
     # Calculate mean of gyroscope data
@@ -69,8 +69,7 @@ if __name__ == "__main__":
     df['direction_diff'] = df['direction_diff'].fillna(df['direction_diff'].iloc[1])
     # Calculate acceleration
     df['velocity_diff'] = df['V'].diff().fillna(df['V'].iloc[0])
-    print(df['velocity_diff'].isnull().sum())
     df['acceleration'] = df['velocity_diff'] / (GRANULARITY / 3600)  # Assuming time difference is 30 seconds
 
     # Save the DataFrame to a new CSV file
-    df.to_csv('final.csv', index=False)
+    df.to_csv('final_5s.csv', index=False)
