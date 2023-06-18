@@ -3,7 +3,6 @@
 # Imports
 import matplotlib.pyplot as plt
 import pandas as pd
-import plot_likert
 import seaborn as sns
 from scipy.stats.stats import pearsonr
 
@@ -11,22 +10,22 @@ from scipy.stats.stats import pearsonr
 OUT_FILE = 'time_series_10s.png'
 
 # Define title for plot
-TITLE = 'Time Series (granularity = 10s)'
+TITLE = 'Time Series (granularity = 1s)'
 
 # Define the desired time range for plot
 START = pd.to_datetime('2023-06-08 18:14:00')
 END = pd.to_datetime('2023-06-08 20:30:00')
 
 # load data
-df = pd.read_csv('merged_data_upsample_10s.csv')
+df = pd.read_csv('merged_data_1s.csv')
 
 # Average PACES scores into 1 variable mood
-paces_cols = ['hate-enjoy', 'bored-interested', 'absorbed', 'tiring-energizing', 'depressed-happy', 'bad-good_physically', 'sense_accomplishment']
-df['PACES'] = df[paces_cols].mean(axis=1)
+paces_cols = ['hate-enjoy', 'notpleasant_pleasant', 'notpleasurable_pleasurable', 'bad-good_feeling']
+df['PACES'] = df[paces_cols].sum(axis=1)
 print(df['PACES'].describe())
 
 # Rename wind column
-df = df.rename(columns={'Wind (m/s)': 'Wind (Km/h)'})
+# df = df.rename(columns={'Wind (m/s)': 'Wind (Km/h)'})
 
 # Plot weather and mood score -----------------------------------------------------
 
@@ -124,3 +123,5 @@ for i, plot in enumerate(plots):
         ax[i].set_xlabel('Date and time')
 
 plt.savefig(f"plots/{OUT_FILE}")
+
+# Cross correlation plots

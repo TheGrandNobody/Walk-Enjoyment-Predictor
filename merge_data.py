@@ -7,7 +7,7 @@ import pandas as pd
 from collections import defaultdict
 
 # Sample and duplicate label every interval seconds
-UP_SAMPLING_INTERVAL = 30
+UP_SAMPLING_INTERVAL = 0.25
 
 
 def load_unify_data(xls):
@@ -236,9 +236,9 @@ if __name__ == "__main__":
     # Re arrange columns
     merged_df_final = merged_df_final.drop(columns=["Tijdstempel", "Date", "Time"])
     meta_cols = ["ID", "datetime"]
-    label_cols = ["hate-enjoy", "bored-interested", "absorbed", "tiring-energizing", "depressed-happy", "bad-good_physically", "sense_accomplishment"]
-    whether_cols = ["Weather", "Temperature (Celsius)", "UV index", "Wind (km/h)", "Humidity (%)"]
+    label_cols = ["hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"]
+    whether_cols = ["Weather", "Temperature (Celsius)", "UV index", "Wind (m/s)", "Humidity (%)"]
     new_col = meta_cols + [col for col in merged_df_final.columns.to_list() if col not in meta_cols+whether_cols+label_cols] + whether_cols + label_cols
     merged_df_final = merged_df_final[new_col]
     
-    merged_df_final.to_csv("merged_data_upsample.csv")
+    merged_df_final.to_csv("merged_data_025s.csv")
