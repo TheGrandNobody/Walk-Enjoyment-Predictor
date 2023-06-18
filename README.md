@@ -1,1 +1,0 @@
-# Walk-Enjoyment-Predictor

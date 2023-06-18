@@ -1,10 +1,21 @@
 import pandas as pd
 import numpy as np
+import math
 
 GRANULARITY = 5 # 5 seconds
 
-# Function to calculate distance between two lat/lon points using Haversine formula
 def haversine(lat1, lon1, lat2, lon2):
+    """ Calculate the great circle distance between two points
+
+    Args:
+        lat1 (float): The first latitude coordinate.
+        lon1 (float): The first longitude coordinate.
+        lat2 (float): The second latitude coordinate.
+        lon2 (float): The second longitude coordinate.
+
+    Returns:
+        float: The distance between the two points in kilometers.
+    """
     R = 6371  # Radius of the Earth in kilometers
     phi1 = np.radians(lat1)
     phi2 = np.radians(lat2)
@@ -24,6 +35,22 @@ def within_bounds(row):
         results.append(int(bound[1] <= lat <= bound[0] and bound[3] <= lon <= bound[2]))
     return 1 if any(results) else 0
 
+def isolation(row):
+    # Center of Amsterdam
+    lat_center = 52.377956
+    lon_center = 4.897070
+    dlat = row['La'] - lat_center
+    dlon = row['Lo'] - lon_center
+    # Calculate base of exponent
+    b = 0.3**(1/32)
+    distance = math.sqrt(dlat**2 + dlon**2) * 111  # Convert degrees to km
+    # Calculate probability using exponential decay function
+    p = 1 * b**distance
+    # Apply weather and environment modifiers
+    if row['nature_bool'] == 1:
+        p += 0.5 if row['Weather'] == 'Sunny' else 0.1
+    return p
+    
 if __name__ == "__main__":
     # Load your data
     df = pd.read_csv('clean_5s.csv')
@@ -78,13 +105,13 @@ if __name__ == "__main__":
     df['direction_diff'] = df['D'].diff().abs()
     df['direction_diff'] = df['direction_diff'].fillna(df['direction_diff'].iloc[1])
     # Calculate acceleration
-    df['velocity_diff'] = df['V'].diff()
+    df['velocity_diff'] = df['V'].diff().fillna(df['V'].iloc[0])
     df['acceleration'] = df['velocity_diff'] / (GRANULARITY / 3600)
 
     ### MISCELLANEOUS ###
     # Calculate whether the user is in nature or not
     df['nature_bool'] = df.apply(within_bounds, axis=1)
-    df['isolation_score'] 
+    df['isolation_score'] = df.apply(isolation, axis=1)
     
     # Save the DataFrame to a new CSV file
     df.to_csv('final_5s.csv', index=False)
