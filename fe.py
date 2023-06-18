@@ -14,11 +14,21 @@ def haversine(lat1, lon1, lat2, lon2):
     res = R * (2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a)))
     return np.abs(res)
 
+# Function to check if coordinates are within bounds
+def within_bounds(row):
+    bounds = [[52.316674, 52.31009, 4.966908, 4.957549], [52.313234, 52.299528, 5.004881, 4.969026],
+     [52.362443, 52.358236, 4.924949, 4.915966], [52.355438, 52.353343,4.898965, 4.893818]]
+    results = []
+    lat, lon = row['La'], row['Lo']
+    for bound in bounds:
+        results.append(int(bound[1] <= lat <= bound[0] and bound[3] <= lon <= bound[2]))
+    return 1 if any(results) else 0
+
 if __name__ == "__main__":
     # Load your data
     df = pd.read_csv('clean.csv')
 
-    ## GYROSCOPE
+    ### GYROSCOPE ###
     # Calculate mean of gyroscope data
     df['gyro_mean'] = df[['Gyroscope x', 'Gyroscope y', 'Gyroscope z']].mean(axis=1)
     # Calculate median of gyroscope data
@@ -26,7 +36,7 @@ if __name__ == "__main__":
     # Calculate magnitude of angular velocity
     df['gyro_magnitude'] = np.sqrt(df['Gyroscope x']**2 + df['Gyroscope y']**2 + df['Gyroscope z']**2)
 
-    ## MAGNETOMETER
+    ### MAGNETOMETER ###
     # Calculate mean of magnetometer data
     df['mag_mean'] = df[['Magnetic field x', 'Magnetic field y', 'Magnetic field z']].mean(axis=1)
     # Calculate median of magnetometer data
@@ -34,7 +44,7 @@ if __name__ == "__main__":
     # Calculate strength of magnetic field
     df['mag_strength'] = np.sqrt(df['Magnetic field x']**2 + df['Magnetic field y']**2 + df['Magnetic field z']**2)
 
-    ## ACCELEROMETER (with gravity)
+    ### ACCELEROMETER (with gravity) ###
     # Calculate mean of accelerometer data
     df['acc_mean'] = df[['Acceleration x', 'Acceleration y', 'Acceleration z']].mean(axis=1)
     # Calculate median of accelerometer data
@@ -42,7 +52,7 @@ if __name__ == "__main__":
     # Calculate the angle of inclination
     df['acc_angle'] = np.arctan(np.sqrt(df['Acceleration x']**2 + df['Acceleration y']**2) / df['Acceleration z'])
 
-    ## ACCELEROMETER (without gravity)
+    ### ACCELEROMETER (without gravity) ###
     # Calculate mean of accelerometer data
     df['lacc_mean'] = df[['Linear Acceleration x', 'Linear Acceleration y', 'Linear Acceleration z']].mean(axis=1)
     # Calculate median of accelerometer data
@@ -50,7 +60,7 @@ if __name__ == "__main__":
     # Calculate the total acceleration
     df['tot_acc'] = np.sqrt(df['Linear Acceleration x']**2 + df['Linear Acceleration y']**2 + df['Linear Acceleration z']**2)
 
-    ## GPS
+    ### GPS ###
     # Shift the DataFrame to get the next coordinates, calculate the distance, and then fill any NaN values with 0
     df['lat_shift'] = df['La'].shift(-1)
     df['lon_shift'] = df['Lo'].shift(-1)
@@ -68,7 +78,12 @@ if __name__ == "__main__":
     df['direction_diff'] = df['D'].diff().abs()
     # Calculate acceleration
     df['velocity_diff'] = df['V'].diff()
-    df['acceleration'] = df['velocity_diff'] / (GRANULARITY / 3600)  # Assuming time difference is 30 seconds
+    df['acceleration'] = df['velocity_diff'] / (GRANULARITY / 3600)
 
+    ### MISCELLANEOUS ###
+    # Calculate whether the user is in nature or not
+    df['nature_bool'] = df.apply(within_bounds, axis=1)
+    df['isolation_score'] 
+    
     # Save the DataFrame to a new CSV file
     df.to_csv('final.csv', index=False)
