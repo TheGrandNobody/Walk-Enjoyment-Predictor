@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 
-GRANULARITY = 5 # 5 seconds
+GRANULARITY = 30 # 5 seconds
 
 def haversine(lat1, lon1, lat2, lon2):
     """ Calculate the great circle distance between two points
@@ -49,7 +49,7 @@ def isolation(row):
     # Apply weather and environment modifiers
     if row['nature_bool'] == 1:
         p += 0.5 if row['Weather'] == 'Sunny' else 0.1
-    return p
+    return p if p < 1 else 1
     
 if __name__ == "__main__":
     # Load your data
@@ -114,4 +114,4 @@ if __name__ == "__main__":
     df['isolation_score'] = df.apply(isolation, axis=1)
     
     # Save the DataFrame to a new CSV file
-    df.to_csv('final_5s.csv', index=False)
+    df.to_csv('final.csv', index=False)
