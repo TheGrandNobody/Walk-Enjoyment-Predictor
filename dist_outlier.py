@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     # Load the data
-    data = pd.read_csv("merged_data_1s.csv")
+    data = pd.read_csv("merged_data_5s.csv")
     data['datetime'] = pd.to_datetime(data['datetime'])
     data['datetime'] = data['datetime'].apply(lambda x: x.timestamp())
     data['Weather'] = data['Weather'].apply(lambda x: 0 if x == "Sunny" else 1 if x == "Rainy" else 0)
@@ -45,10 +45,10 @@ if __name__ == "__main__":
 
     # Filter your dataframe to remove the anomalies
     data = data[data['anomaly'] == 1]
-    data = data.drop(["anomaly", "Unnamed: 0", "ID", "hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"], axis = 1)
+    data = data.drop(["anomaly", "Unnamed: 0", "hate-enjoy", "notpleasant_pleasant", "notpleasurable_pleasurable", "bad-good_feeling"], axis = 1)
 
     # Save the dataframe to a csv file
-    data.to_csv("clean_1s.csv", index=False)
+    data.to_csv("clean_5s.csv", index=False)
 
     
     
