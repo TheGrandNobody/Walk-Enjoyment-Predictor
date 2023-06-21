@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 
-GRANULARITY = 30 # 5 seconds
+GRANULARITY = 0.25 # 5 seconds
 
 def haversine(lat1, lon1, lat2, lon2):
     """ Calculate the great circle distance between two points
@@ -53,7 +53,7 @@ def isolation(row):
     
 if __name__ == "__main__":
     # Load your data
-    df = pd.read_csv('clean_5s.csv')
+    df = pd.read_csv('clean_025s.csv')
 
     ### GYROSCOPE ###
     # Calculate mean of gyroscope data
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     df['direction_diff'] = df['direction_diff'].fillna(df['direction_diff'].iloc[1])
     # Calculate acceleration
     df['velocity_diff'] = df['V'].diff().fillna(df['V'].iloc[0])
-    df['acceleration'] = df['velocity_diff'] / (GRANULARITY / 3600)
+    df['acceleration'] = df['velocity_diff'] / GRANULARITY
 
     ### MISCELLANEOUS ###
     # Calculate whether the user is in nature or not
@@ -114,4 +114,4 @@ if __name__ == "__main__":
     df['isolation_score'] = df.apply(isolation, axis=1)
     
     # Save the DataFrame to a new CSV file
-    df.to_csv('final.csv', index=False)
+    df.to_csv('final_025s.csv', index=False)

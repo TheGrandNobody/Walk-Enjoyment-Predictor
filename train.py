@@ -125,7 +125,7 @@ def objective(trial):
 
 if __name__ == "__main__":
     study = optuna.create_study(direction='minimize')  # Create a new study.
-    study.optimize(objective, n_trials=15)  # Invoke optimization of the objective function.
+    study.optimize(objective, n_trials=1)  # Invoke optimization of the objective function.
     best_trial = study.best_trial
 
     # Now you can save the model parameters from the best trial
@@ -158,12 +158,24 @@ if __name__ == "__main__":
     # we create a DeepExplainer object that can calculate shap values
     explainer = shap.DeepExplainer(model, inputs[:100])  # use a subset of training data as background
     test_inputs, test_targets = next(iter(test_loader))
+    test_inputs = test_inputs.view(test_inputs.size(0), 1, -1)
     test_inputs = test_inputs.to(device)
     # we calculate shap values for the test examples
     shap_values = explainer.shap_values(test_inputs)
 
-    # plot the feature attributions
-    shap.summary_plot(shap_values, test_inputs.view(-1, inputs.size(-1)))
+    # Combine the output-specific SHAP arrays into one array with an added output dimension
+    shap_values_combined = np.stack(shap_values, axis=0)
+
+    # Reshape test_inputs for compatibility with SHAP plotting function
+    test_inputs_reshaped = test_inputs.view(test_inputs.shape[0], -1)
+
+    print("Shape of shap_values_combined: ", shap_values_combined.shape)
+    print("Shape of test_inputs_reshaped: ", test_inputs_reshaped.shape)
+
+    # Plot the SHAP values
+    shap.summary_plot(shap_values_combined, test_inputs_reshaped.cpu().numpy())
+
+
 
     # Print the average absolute SHAP values for each feature
     print(torch.mean(torch.abs(torch.tensor(shap_values)), axis=0))
